@@ -1,0 +1,47 @@
+mipsel-linux-gcc -MM -g *.c *.S > .depend
+gcc -Wall createimage.c -o createimage
+mipsel-linux-gcc -G 0 -O2  -fno-pic -mno-abicalls -fno-builtin -nostdinc -mips3 -Ttext=0xffffffffa0800000 -N -o bootblock bootblock.S -nostdlib -e main -Wl,-m -Wl,elf32ltsmip -T ld.script
+mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc -G 0 -O2  -fno-pic -mno-abicalls -fno-builtin -nostdinc -mips3 -Ttext=0xa0800200 -N -o kernel kernel.c memory.c entry.S printf.c printk.c print.c  scheduler.c sync.c th1.c th2.c util.c queue.c philosophers.c barrier_test.c interrupt.c syscall.S -nostdlib -e _start -Wl,-m -Wl,elf32ltsmip -T ld.script
+mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc   -c -o process1.o process1.c
+mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc   -c -o syslib.o syslib.c
+mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc   -c -o util.o util.c
+mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc -G 0 -O2  -fno-pic -mno-abicalls -fno-builtin -nostdinc -mips3 -Ttext=0x100000 -N -o process1 process1.c syslib.c syscall.S util.c printf.c -nostdlib -Wl,-m -Wl,elf32ltsmip -T ld.script
+# mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc -G 0 -O2  -fPIC -mno-abicalls -fno-builtin -nostdinc -mips3 -N -o process1 process1.c syslib.c syscall.S util.c printf.c -nostdlib -Wl,-m -Wl,elf32ltsmip -T ld.script
+mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc   -c -o process2.o process2.c
+mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc -G 0 -O2  -fno-pic -mno-abicalls -fno-builtin -nostdinc -mips3 -Ttext=0x200000 -N -o process2 process2.c syslib.c syscall.S util.c printf.c -nostdlib -Wl,-m -Wl,elf32ltsmip -T ld.script
+# mipsel-linux-gcc -DKERNEL_ADDR=0xa0800200 -DPROC1_ADDR=0x100000 -DPROC1_LOC=0xa0805800 -DPROC1_SIZE=0x1000 -DPROC2_ADDR=0x200000 -DPROC2_LOC=0xa0806800 -DPROC2_SIZE=0xe00 -g -I./freestanding-inc -Wl,-static,-lgcc -G 0 -O2  -fPIC -mno-abicalls -fno-builtin -nostdinc -mips3 -N -o process2 process2.c syslib.c syscall.S util.c printf.c -nostdlib -Wl,-m -Wl,elf32ltsmip -T ld.script
+./createimage --extended bootblock kernel process1 process2   #all parameters
+bootblock image info
+sectors: 1
+offset of segment in the file: 0x60
+the image's virtural address of segment in memory: 0xa0800000
+the file image size of segment: 0x88
+the size of write to the OS image: 0x88
+padding up to 0x200
+
+kernel image info
+sectors: 43
+offset of segment in the file: 0x60
+the image's virtural address of segment in memory: 0xa0800200
+the file image size of segment: 0x4d90
+the size of write to the OS image: 0x5530
+padding up to 0x5800
+
+process1 image info
+sectors: 8
+offset of segment in the file: 0x60
+the image's virtural address of segment in memory: 0x100000
+the file image size of segment: 0xe10
+the size of write to the OS image: 0xe20
+padding up to 0x6800
+
+process2 image info
+sectors: 7
+offset of segment in the file: 0x60
+the image's virtural address of segment in memory: 0x200000
+the file image size of segment: 0xd90
+the size of write to the OS image: 0xda0
+padding up to 0x7600
+
+dd if=/dev/zero of=floppy.img bs=512 count=2880
+dd if=image of=floppy.img conv=notrunc

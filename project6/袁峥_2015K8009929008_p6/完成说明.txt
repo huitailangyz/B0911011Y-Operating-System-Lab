@@ -1,0 +1,4 @@
+superblock测试部分：已完成，可以实现mount，损坏一个superblock后的mount，以及损坏两个superblock后的mkfs。
+文件系统接口测试部分：已全完成。
+fio测试部分：已能正常运行fio。
+bonus部分：完成bonus1，包括utime、chmod、destroy、readlink。

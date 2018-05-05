@@ -1,0 +1,4 @@
+make clean
+make
+sudo dd if=image of=/dev/sdb
+sudo fdisk -l
